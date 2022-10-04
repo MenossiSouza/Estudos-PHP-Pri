@@ -1,0 +1,168 @@
+Já temos a funcionalidade de saque, e agora precisamos implementar uma funcionalidade de depósito. Antes
+ de criarmos a função referente a ela, vamos pensar na lógica por trás dessa operação.
+
+A conta do Vinicius em $contasCorrentes receberá uma nova conta onde foi realizado um depósito de, por exemplo, 900 reais:
+
+$contasCorrentes['123.256.789-12'] = depositar(
+    $contasCorrentes['123.256.789-12'],
+    900
+);COPIAR CÓDIGO
+Com a instrução function, criaremos a função depositar() que deverá receber, como parâmetros, uma $conta e um valorADepositar.
+
+function depositar($conta, $valorADepositar) {
+
+}COPIAR CÓDIGO
+Agora, precisaremos executar a operação de adição do $valorADepositar ao saldo da $conta, retornando uma $conta modificada.
+
+function depositar($conta, $valorADepositar) {
+    $conta['saldo'] += $valorADepositar;
+
+    return $conta;
+
+}COPIAR CÓDIGO
+Se executarmos php banco.php no terminal, teremos como retorno:
+
+123.456.789-10 Maria 9500
+
+123.456.789-11 Alberto 200
+
+123.256.789-12 Vinicius 1000
+
+Ou seja, nossa função de depósito funcionou, já que o Vinicius, que tinha inicialmente 100 reais de saldo, agora tem 1000.
+ Mas o que acontece se fizermos o depósito de um valor negativo, por exemplo -300?
+
+$contasCorrentes['123.256.789-12'] = depositar(
+    $contasCorrentes['123.256.789-12'],
+    -300
+);COPIAR CÓDIGO
+Executando nosso programa, Vinicius ficará com -200, devendo dinheiro para o banco. Precisaremos, então, adicionar uma verificação
+ para a função depositar(), garantindo que o $valorADepositar é maior do que 0. Se essa condição for verdadeira, o 
+ depósito ocorrerá normalmente. Do contrário, exibiremos a mensagem "Depósitos precisam ser positivos" com a nossa função exibeMensagem().
+
+function depositar($conta, $valorADepositar) {
+    if ($valorADepositar > 0) {
+        $conta['saldo'] += $valorADepositar;
+    } else {
+        exibeMensagem("Depósitos precisam ser positivos");
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+Dessa vez, ao executarmos, teremos como retorno a mensagem criada, e o Vinicius continuará com 100 reais.
+
+Agora que já estamos mais experientes com funções e sabemos a diferença entre função e subrotina, vou passar algumas
+ dicas. Imagine a seguinte uma situação na qual passemos uma string tres reais como $valorASacar da nossa função sacar():
+
+$contasCorrentes['123.456.789-10'] = sacar(
+    $contasCorrentes['123.456.789-10'],
+    'tres reais'
+);COPIAR CÓDIGO
+Se executarmos o código dessa forma, o PHP lançará um aviso de que um valor não numérico foi encontrado na função:
+
+PHP Warning: A non-numeric value encountered in C:\Users\rodrigo\PhpstormProjects\php-primeiros-passos\avancando\banco.php on line 12
+
+Warning: A non-numeric value encountered in C:\Users\rodrigo\PhpstormProjects\php-primeiros-passos\avancando\banco.php on line 12
+
+Repare que a linha referente ao erro é aquela em que a operação de saque é executada ($conta['saldo'] -= $valorASacar).
+ Porém, o ideal seria se fôssemos avisados do erro no chamamento da função, já que a construção da função em si está correta. Para isso, poderíamos informar que a função só deverá aceitar valores numéricos, e não strings. Para isso, podemos definir o tipo na função:
+
+function sacar($conta, float $valorASacar)
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+No PhpStorm, é possível que você receba a indicação de um erro na definição do tipo float, pois ele ainda não identificou
+ que você está usando a versão mais recente do PHP. Com "Alt + Enter", será exibida a opção "Switch to PHP 7.0 language level", 
+ que possibilita mudar para o modo de verificação do PHP 7, o que acabará com o erro. Em qualquer outro editor de código isso 
+ provavelmente não será um problema.
+
+Com essa construção, o que acontecerá se tentarmos sacar um valor inteiro? Na tabela de conversões que compartilhamos no vídeo
+ passado existe uma explicação mais aprofundada sobre isso, mas, basicamente, um número inteiro cabe em uma variável do 
+ tipo float (decimal) - afinal, 100 e 100.0 são a mesma coisa. Porém, uma variável do tipo float não cabe em um inteiro, 
+ pois perde sua precisão (os decimais).
+
+Se executarmos a nossa tentativa de saque de tres reais, receberemos um erro do PHP informando que o argumento passado para
+ sacar() precisa ser do tipo float, e um argumento do tipo string foi passado, apontando também a linha correta do erro.
+  Agora podemos voltar o valor a ser sacado para os antigos 500 reais.
+
+Também devemos nos atentar ao fato de a $conta precisa ser do tipo array, e teremos um erro se for passado qualquer outro tipo:
+
+function sacar(array $conta, float $valorASacar)
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+Sempre podemos informar na função o tipo de dado que queremos receber. Além disso, podemos informar também o tipo de dado sendo 
+retornado. Para isso, depois do fechamento dos parênteses, usamos : seguidos do tipo em questão.
+
+function sacar(array $conta, float $valorASacar): array
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+É interessante mantermos um padrão de codificação, e funções normalmente têm a abertura das chaves na linha de baixo, assim 
+como no código anterior. Já estruturas de controle, como if, for e while, abrem chaves na mesma linha. É interessante conhecer 
+os padrões que a comunidade usuária da linguagem adota!
+
+Vamos continuar consertando o recebimento de valores nas nossas funções. Em exibeMensagem(), por exemplo, sabemos que o tipo 
+a ser recebido deve ser uma string:
+
+function sacar(array $conta, float $valorASacar): array
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+Além disso, a função depositar() deve receber um array $conta e um float $valorADepositar, devolvendo um array que é a nova $conta:
+
+function depositar(array $conta, float $valorADepositar): array {
+    if ($valorADepositar > 0) {
+        $conta['saldo'] += $valorADepositar;
+    } else {
+        exibeMensagem("Depósitos precisam ser positivos");
+    }
+
+    return $conta;
+}COPIAR CÓDIGO
+Também voltaremos as chamadas das nossas funções aos valores originais:
+
+$contasCorrentes['123.256.789-12'] = depositar(
+    $contasCorrentes['123.256.789-12'],
+    900
+);
+
+
+$contasCorrentes['123.456.789-10'] = sacar(
+    $contasCorrentes['123.456.789-10'],
+    500
+);
+
+$contasCorrentes['123.456.789-11'] = sacar(
+    $contasCorrentes['123.456.789-11'], 
+    200
+);COPIAR CÓDIGO
+Dessa forma, o código continuará funcionando normalmente, realizando o depósito e os saques com sucesso. Aparentemente 
+tudo está funcionando, mas parece incômodo...
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    exibeMensagem($cpf . " " . $conta['titular'] . ' ' . $conta['saldo']);
+}

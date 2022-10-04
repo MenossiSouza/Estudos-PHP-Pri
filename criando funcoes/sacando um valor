@@ -1,0 +1,90 @@
+Nosso treinamento com PHP está ficando mais sério: temos tipos de dados mais complexos, loops um pouco diferentes e 
+contas-correntes para serem manipuladas. Agora, queremos realizar operações como saques e depósitos nessas contas. 
+Para isso, criaremos um novo arquivo banco.php, para o qual copiaremos todo o código que construímos no foreach.php,
+ exceto a adição das novas contas no array:
+
+
+$contasCorrentes = [
+    '123.456.789-10' => [
+        'titular' => 'Maria',
+        'saldo' => 10000
+    ],
+    '123.456.789-11' => [
+        'titular' => 'Alberto',
+        'saldo' => 300
+    ],
+    '123.256.789-12' => [
+        'titular' => 'Vinicius',
+        'saldo' => 100
+    ]
+];
+
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    echo $cpf . " " . $conta['titular'] . PHP_EOL;
+}COPIAR CÓDIGO
+Antes de exibirmos as contas no foreach, queremos realizar um saque na conta da Maria. Para isso, podemos acessar 
+a chave saldo a partir do CPF e atribuir a ela a mesma chave, subtraindo 500:
+
+$contasCorrentes['123.456.789-10']['saldo'] = $contasCorrentes['123.456.789-10']['saldo'] - 500;COPIAR CÓDIGO
+No treinamento anterior, vimos que existe uma maneira de escrevermos esse tipo de operação (na qual um valor recebe ele mesmo)
+ de forma mais simples:
+
+$contasCorrentes['123.456.789-10']['saldo'] -= 500;
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    echo $cpf . " " . $conta['titular'] . ' ' . $conta['saldo'] . PHP_EOL;
+}
+;COPIAR CÓDIGO
+Isso significa que o valor $contasCorrentes['123.456.789-10']['saldo'] receberá ele mesmo e sofrerá a operação com o 
+número que passamos. Na prática, estamos subtrando 500 do saldo de uma conta-corrente com o CPF 123.456.789-10. Depois,
+ estamos exibindo o $cpf, o titular da $conta e o saldo.
+
+Note que, na linha em que fazemos o echo, temos aspas duplas em determinado momento, e aspas simples em outro. Será que
+ existe uma razão para isso? Vá pensando...
+
+Executando php banco.php no terminal, teremos:
+
+123.456.789-10 Maria 9500
+
+123.456.789-11 Alberto 300
+
+123.256.789-12 Vinicius 100
+
+Isso significa que o nosso saque funcionou! E o que acontece se tentarmos sacar o mesmo valor da conta do Alberto?
+
+$contasCorrentes['123.456.789-10']['saldo'] -= 500;
+$contasCorrentes['123.456.789-11']['saldo'] -= 500;
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    echo $cpf . " " . $conta['titular'] . ' ' . $conta['saldo'] . PHP_EOL;
+}COPIAR CÓDIGO
+Dica: no PhpStorm, você pode usar "Ctrl + D" para duplicar uma linha.
+
+Executando esse código, teremos um saldo negativo na conta do Alberto:
+
+123.456.789-11 Alberto -200
+
+Porém, o nosso banco não permite saldos negativos. Portanto, criaremos uma condicional if que verificará se o valor do
+ saque é maior do que o saldo que queremos remover. Nessa situação, exibiremos a mensagem de erro "Você não pode sacar este
+  valor". Do contrário, o saque será realizado corretamente.
+
+if (500 > $contasCorrentes['123.456.789-11']['saldo']) {
+    echo "Você não pode sacar este valor" . PHP_EOL;
+} else 
+    $contasCorrentes['123.456.789-11']['saldo'] -= 500;
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    echo $cpf . " " . $conta['titular'] . ' ' . $conta['saldo'] . PHP_EOL;
+}COPIAR CÓDIGO
+Executando o nosso código, teremos como resposta:
+
+Você não pode sacar este valor 123.456.789-10 Maria 9500 123.456.789-11 Alberto 300 123.256.789-12 Vinicius 100
+
+Assim, a nossa mensagem foi exibida e o valor na conta do Alberto continou o mesmo. Porém, se quisermos fazer essa verificação
+ para as outras contas, teremos que repetí-lo. Além disso, se alterarmos a condição para 100 e tentarmos sacar 500, não receberemos 
+ um erro. Temos ainda outro problema, que é o fato do valor a ser sacado não estar armazenado em uma variável, o que pode ocasionar erros.
+
+Seria interessante criarmos uma funcionalidade "sacar" para a qual pudéssemos informar um valor a ser sacado. Essa funcionalidade, 
+separada de alguma forma, verificaria se o valor pode ser sacado e, se afirmativo, realizaria esse saque. Do contrário, ela nos
+ retornaria um erro.

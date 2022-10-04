@@ -1,0 +1,17 @@
+ Arrays numéricos (ou indexados) têm como característica possuírem apenas números inteiros em suas chaves, enquanto arrays 
+associativos têm strings como chaves. A diferença é teórica pois o interpretador do PHP não faz distinção desses 2 tipos, nos permitindo
+inclusive criar arrays que contenha tanto inteiros quanto strings como chaves.
+
+
+um array associativo sempre define elementos composto por uma chave e um valor
+a associação entre chave e valor é feito com =>
+a chave funciona como um índice explicito (definido por nós)
+o valor pode ser um valor primitivo ou outro array
+a chave deve ser do tipo inteiro ou string, todos os outros tipos o PHP tenta converter
+um array associativo também é chamado de mapa ou dicionário
+podemos combinar um array simples e array associativo para definir estruturas mais complexas
+o laço foreach oferece uma forma mais expressiva de iteração
+no foreach podemos acessar o índice e o valor do elemento da iteração
+arrays podem crescer e podemos adicionar novos elementos
+em arrays simples, com índice numérico, basta usar [] para adicionar um elemento no final (por exemplo, $lista[] = 12;)
+nesse caso o PHP automaticamente incrementa o índice

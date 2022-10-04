@@ -1,0 +1,57 @@
+No último vídeo comentamos que, devido a diversos motivos e problemas, queremos isolar parte do nosso código, que é a parte que
+ realiza um saque.
+
+Parece correto chamarmos o que estamos fazendo nessa operação de "rotina de execução". Afinal, sempre que executarmos esse código, 
+ele fará a mesma coisa. Queremos, a partir dessa rotina, criar uma parte específica do nosso programa que sempre executará esse mesmo código.
+
+Para que isso fique um pouco mais simples, vamos trabalhar com a parte em que exibimos uma mensagem e quebramos uma linha ao final, 
+que é repetida em diversos pontos do nosso código.
+
+Como conversamos anteriormente, sempre que temos um bloco de código isolado, nós o colocamos entre chaves. No momento, tudo o que
+ queremos fazer é exibir uma mensagem (portanto chamaremos um echo com uma variável $mensagem) e quebrar a linha com PHP_EOL. 
+ Chamaremos essa funcionalidade e exibeMensagem.
+
+exibeMensagem {
+    echo $mensagem . PHP_EOL;
+}COPIAR CÓDIGO
+Se estamos isolando uma funcionalidade, ela será executada em outros locais - por exemplo, dentro do nosso foreach. Como
+ queremos exibir uma mensagem, precisamos definir que mensagem será essa (como $cpf . " " . $conta['titular'] . ' ' . $conta['saldo']).
+
+Da mesma forma que fizemos com o if e com o for, podemos passar essa informação entre parênteses:
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    exibeMensagem($cpf . " " . $conta['titular'] . ' ' . $conta['saldo']);
+}COPIAR CÓDIGO
+Sabemos que essa mensagem precisa chegar, de alguma forma, à nossa funcionalidade exibeMensagem. Isso pode ser feito passando 
+o nome do valor que será recebido entre parênteses (no caso, a própria variável $mensagem). Esse valor é chamado de "parâmetro".
+
+exibeMensagem($mensagem){
+    echo $mensagem . PHP_EOL;
+}COPIAR CÓDIGO
+O PHP indicará um erro, pois ainda falta informarmos que o nome exibeMensagem() é de uma funcionalidade separada (que também 
+pode ser chamada de subrotina). Para passarmos essa instrução, utilizamos o nome function.
+
+function exibeMensagem($mensagem){
+    echo $mensagem . PHP_EOL;
+}COPIAR CÓDIGO
+Assim, temos uma função chamada exibeMensagem() que precisa receber um valor, que demos o nome $mensagem. Essa funcionalidade
+ exibe a $mensagem que foi recebida, acrescentando uma quebra de linha ao final.
+
+Feito isso, podemos chamar essa função também em outros pontos do nosso código:
+
+if (500 > $contasCorrentes['123.456.789-10']['saldo']) {
+    exibeMensagem("Você não pode sacar este valor");
+} else
+    $contasCorrentes['123.456.789-10']['saldo'] -= 500;
+
+
+if (500 > $contasCorrentes['123.456.789-11']['saldo']) {
+    exibeMensagem("Você não pode sacar este valor");
+} else
+    $contasCorrentes['123.456.789-11']['saldo'] -= 500;
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    exibeMensagem($cpf . " " . $conta['titular'] . ' ' . $conta['saldo']);
+}COPIAR CÓDIGO
+Agora, o nosso código "repetido" de exibir uma mensagem e quebrar linha ficou isolado em uma funcionalidade/subrotina que 
+pode ser executada e outros pontos do programa.

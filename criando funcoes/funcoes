@@ -1,0 +1,125 @@
+Queremos criar uma nova função sacar() que cria uma cópia da conta da Maria, mas subtrai 500 reais.
+
+$contasCorrentes['123.456.789-10'] = sacar();
+Para que essa função seja executada, precisaremos passar a conta da Maria (o valor que será modificado e devolvido) e o valor que queremos
+ sacar dessa conta.
+
+$contasCorrentes['123.456.789-10'] = sacar($contasCorrentes['123.456.789-10'], 500);
+Repare que uma função pode receber vários parâmetros, desde que eles sejam separados por vírgula. Entendido isso, criaremos a 
+função propriamente dita, recebendo como parâmetros $conta e $valorASacar:
+
+function sacar($conta, $valorASacar) {
+
+
+}
+Colocaremos o nosso código de verificação dentro dessa função, fazendo algumas alterações. Primeiro, sabemos que
+ $contasCorrentes é uma variável que não existe dentro dessa função, afinal uma função só conhece as variáveis que forem 
+ definidas dentro dela. Como receberemos o valor da $conta, não precisaremos dessa variável.
+
+Além disso, estamos tentando verificar se 500 é maior do que o saldo. Porém, na verdade, queremos verificar se 
+o $valorASacar é maior do que o saldo da conta. Essa mesma variável será utilizada na operação de saque em si.
+
+function sacar($conta, $valorASacar)
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+}
+Assim, caso o $valorASacar seja maior do que o saldo, será exibida uma mensagem informando que a pessoa não pode sacar.
+ Caso contrário, o $valorASacar será subtraído do valor do saldo.
+
+Lembra que aprendemos que uma função só conhece as variáveis de dentro dela? Isso também significa que o parâmetro 
+$conta só existe dentro da função sacar(). Dessa forma, se executarmos o nosso código da maneira como ele está, nada vai acontecer.
+
+
+
+function exibeMensagem($mensagem){
+    echo $mensagem . PHP_EOL;
+}
+
+function sacar($conta, $valorASacar)
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+}
+
+$contasCorrentes = [
+    '123.456.789-10' => [
+        'titular' => 'Maria',
+        'saldo' => 10000
+    ],
+    '123.456.789-11' => [
+        'titular' => 'Alberto',
+        'saldo' => 300
+    ],
+    '123.256.789-12' => [
+        'titular' => 'Vinicius',
+        'saldo' => 100
+    ]
+];
+
+
+$contasCorrentes['123.456.789-10'] = sacar($contasCorrentes['123.456.789-10'], valorAsacar: 500);
+
+foreach ($contasCorrentes as $cpf => $conta) {
+    exibeMensagem($cpf . " " . $conta['titular'] . ' ' . $conta['saldo']);
+}
+Como retorno, teremos:
+
+123.456.789-10
+
+123.456.789-11 Alberto 300
+
+123.256.789-12 Vinicius 100
+
+Ou seja, o titular e o saldo da Maria não aparecem mais. Isso porque, em sacar($contasCorrentes['123.456.789-10'], valorAsacar: 500), 
+estamos modificando uma cópia da conta da Maria (o parâmetro $conta), e não a variável original. Precisaremos, então,
+ devolver o parâmetro que foi modificado para que ele seja armazenado na conta. Para isso, faremos return $conta:
+
+function sacar($conta, $valorASacar)
+{
+    if ($valorASacar > $conta['saldo']) {
+        exibeMensagem("Você não pode sacar este valor");
+    } else {
+        $conta['saldo'] -= $valorASacar;
+    }
+
+    return $conta;
+}
+Como retorno da execução desse código, teremos:
+
+123.456.789-10 Maria 9500
+
+123.456.789-11 Alberto 300
+
+123.256.789-12 Vinicius 100
+
+Ou seja, o nosso saque funcionou! Vamos tentar repetir o processo para a conta do Alberto:
+
+$contasCorrentes['123.456.789-10'] = sacar($contasCorrentes['123.456.789-10'], 500);
+$contasCorrentes['123.456.789-11'] = sacar($contasCorrentes['123.456.789-11'], 500);
+Quando executarmos php banco.php no terminal, o PHP verificará que 500 é maior do que o valor na conta de Alberto (300), e, 
+por isso, retornará a $conta sem modificação alguma. Assim, teremos:
+
+Você não pode sacar.
+
+123.456.789-10 Maria 9500
+
+123.456.789-11 Alberto 300
+
+123.256.789-12 Vinicius 100
+
+Com isso, conseguimos isolar sub-rotinas e funções. Mas qual a diferença entre sub-rotinas e funções? Sinceramente, a maioria 
+das pessoas que programam não sabem explicar essa diferença, porque ela é bem sutil. Uma sub-rotina executa tudo que ele precisa 
+dentro da própria função e não devolve valor nenhum. Já uma função executa e devolve um valor.
+
+Para o PHP e algumas outras linguagens de programação, não faz diferença na sintaxe, afinal elas são definidas e executadas
+ da mesma forma. Em outras linguagens, a forma de definir ou chamar uma função ou sub-rotina pode ser diferenciada.
+
+No PHP, o importante é entender que uma função ou sub-rotina pode retornar um valor. Quando ela retorna, a chamada da função 
+passa a representar o valor retornado. Em outros casos, ela pode não retornar nada, simplesmente executa algum código.

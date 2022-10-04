@@ -1,0 +1,28 @@
+Nós vimos neste capítulo como definir e utilizar funções, inclusive vimos como definir os tipos utilizados nessas funções.
+
+Sem retorno
+Vimos que é possível criarmos funções que não retornam nada, como foi o caso da função exibeMensagem.
+ Se eu quiser especificar que uma função não retorna nada, podemos utilizar o tipo void. O tipo void é um tipo especial
+  que significa algo como "ausência de valor" (tradução de void em inglês é "vácuo"). Sendo assim, funções que não retornam
+   nada podem ter esse tipo de retorno especificado.
+
+function exibeMensagem(string $mensagem): void
+{
+    echo $mensagem . PHP_EOL;
+}COPIAR CÓDIGO
+Ordem dos parâmetros
+Nós vimos também como passar diversos parâmetros para uma função. Ao passar valores por parâmetro, a ordem deles importa. 
+Ou seja, uma função function teste($a, $b), quando for chamada com teste(1, 2) vai ter o valor de $a = 1 e $b = 2. Embora isso
+ possa parecer óbvio, é muito importante frisar esses detalhes.
+
+Parâmetros nomeados
+Caso a gente queira informar os parâmetros fora de ordem ou até pular alguns parâmetros que possam ser opcionais (vamos aprender 
+a declarar parâmetros opcionais mais adiante na formação) nós podemos utilizar uma funcionalidade do PHP chamada parâmetros nomeados.
+ É basicamente uma sintaxe que permite que a gente informe o nome do parâmetro que estamos passando. Exemplo:
+
+function depositar(array $conta, float $valorADepositar): array
+{
+    // implementação da função
+}
+
+$contasCorrentes['123.456.789-10'] = depositar(valorADepositar: 50
